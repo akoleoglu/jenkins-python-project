@@ -1,12 +1,5 @@
 pipeline{
     agent any
-    environment {
-        MYSQL_DATABASE_HOST = "database-42.cbanmzptkrzf.us-east-1.rds.amazonaws.com"
-        MYSQL_DATABASE_PASSWORD = "Clarusway"
-        MYSQL_DATABASE_USER = "admin"
-        MYSQL_DATABASE_DB = "phonebook"
-        MYSQL_DATABASE_PORT = 3306
-    }
     stages{
        stage("compile"){
            agent{
@@ -39,5 +32,15 @@ pipeline{
                 }
             }
         }
+        stage('build'){
+            agent any
+            steps{
+                sh "docker build -t ahmet/jenkins ."
+                sh "docker tag 931960010427.dkr.ecr.us-east-1.amazonaws.com/ahmet/jenkins/ahmet/jenkins:latest"
+            }
+        }
+    
     }
+
 }
+
