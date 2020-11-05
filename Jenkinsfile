@@ -44,7 +44,7 @@ pipeline{
             agent any
             steps{
                 sh "docker build -t ahmet/jenkins ."
-                sh "docker tag ahmet/jenkins:latest 931960010427.dkr.ecr.us-east-1.amazonaws.com/ahmet/jenkins/ahmet/jenkins:latest"
+                sh "docker tag ahmet/jenkins:latest 931960010427.dkr.ecr.us-east-1.amazonaws.com/ahmet/jenkins:latest"
             }
         }
         stage('push'){
