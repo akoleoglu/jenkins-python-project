@@ -61,6 +61,26 @@ pipeline{
                 sh "docker-compose up -d"
             }
         }
+
+        stage('get-keypair'){
+            agent any
+            steps{
+                sh '''
+                    if [ -f "MyKeyPairAK.pem" ]
+                    then
+                        echo "file exists..."
+                    else
+                        aws ec2 create-key-pair \
+                          --region us-east-1 \
+                          --key-name MyKeyPairAK.pem \
+                          --query KeyMaterial \
+                          --output text > MyKeyPairAK.pem
+                        chmod 400 MyKeyPairAK.pem
+                        ssh-keygen -y -f MyKeyPairAK.pem >> MyKeyPairAK.pem_public.pem
+                    fi
+                '''
+            }
+        }
         
     }
 }
