@@ -81,6 +81,42 @@ pipeline{
                 '''
             }
         }
+
+                stage('create-cluster'){
+            agent any
+            steps{
+                // dont forget to add jenkins to sudoers ----> jenkins ALL=(ALL) NOPASSWD: ALL
+                sh '''
+                    #!/bin/sh
+                    echo $HOME
+                    running=$(sudo lsof -i:80) || true
+                    if [ "$running" != '' ]
+                    then
+                        docker-compose down
+                        exist="$(aws eks list-clusters | grep ahmet-cluster)" || true
+                        if [ "$exist" == '' ]
+                        then
+                            eksctl create cluster \
+                                --name ahmet-cluster \
+                                --version 1.18 \
+                                --region us-east-1 \
+                                --nodegroup-name ahmet-nodes \
+                                --node-type t2.small \
+                                --nodes 1 \
+                                --nodes-min 1 \
+                                --nodes-max 2 \
+                                --ssh-access \
+                                --ssh-public-key  MyKeyPairAK.pem_public.pem \
+                                --managed
+                        else
+                            echo 'no need to create cluster...'
+                        fi
+                    else
+                        echo 'app is not running with docker-compose up -d'
+                    fi
+                '''
+            }
+        }
         
     }
 }
